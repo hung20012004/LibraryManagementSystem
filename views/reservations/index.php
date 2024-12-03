@@ -1,17 +1,18 @@
-<!-- breadcrum -->
+<!-- Breadcrumb -->
 <div class="container-fluid">
     <div class="row my-3">
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 py-2" style="background-color: #f8f9fc;">
                     <li class="breadcrumb-item"><a href="index.php?">Trang chủ</a></li>
-                    <li class="breadcrumb-item">Quản lý tác giả</a></li>
+                    <li class="breadcrumb-item">Quản lý đặt sách</li>
                 </ol>
             </nav>
         </div>
     </div>
 </div>
-<div class="container-fluid ">
+
+<div class="container-fluid">
     <!-- Thông báo lỗi -->
     <?php if (isset($_SESSION['message'])): ?>
         <div id="alert-message" class="alert alert-<?= $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert">
@@ -29,51 +30,67 @@
                     alert.classList.add('fade');
                     setTimeout(function() {
                         alert.style.display = 'none';
-                    }, 150); 
+                    }, 150);
                 }
             }, 2000);
         </script>
     <?php endif; ?>
-    <!-- Phần content -->
-    <div class="card shadow mb-4 ">
+
+    <!-- Nội dung chính -->
+    <div class="card shadow mb-4">
         <div class="card-header py-2">
             <div class="d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Quản lý tác giả</h5>
+                <h5 class="card-title mb-0">Quản lý đặt sách</h5>
                 <div class="d-flex align-items-center">
                     <div class="me-3">
                         <input type="search" id="searchInput" class="form-control" placeholder="Tìm kiếm...">
                     </div>
-                    <a href="index.php?model=author&action=create" class="btn btn-primary ml-3">
+                    <a href="index.php?model=reservation&action=create" class="btn btn-primary ml-3">
                         <i class="fas fa-plus"></i>
                     </a>
                 </div>
             </div>
         </div>
-        <div class="card-body ">
+        <div class="card-body">
             <div class="table-responsive">
                 <table id="dataTable" class="table table-hover table-striped table-bordered">
                     <thead class="table-dark text-center">
                         <tr>
-                            <th class="align-middle">ID</th>
-                            <th class="align-middle">Họ tên</th>
-                            <th class="align-middle">Quốc tịch</th>
-                            <th class="align-middle">Ngày sinh</th>
-                            <th class="text-center align-middle"><i class="fas fa-cog"></i></th>
+                            <th>ID</th>
+                            <th>Tên người đặt</th>
+                            <th>Tên sách</th>
+                            <th>Ngày đặt</th>
+                            <th>Ngày hết hạn</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center"><i class="fas fa-cog"></i></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($authors as $author): ?>
+                        <?php foreach ($reservations as $reservation): ?>
                             <tr>
-                                <td class="text-center align-middle"><?= $author['author_id'] ?></td>
-                                <td class="align-middle"><?= htmlspecialchars($author['name']) ?></td>
-                                <td class="align-middle"><?= htmlspecialchars($author['nationality']) ?></td>
-                                <td class="align-middle"><?= htmlspecialchars((new DateTime($author['birth_date']))->format('d/m/Y')) ?></td>
+                                <td class="text-center align-middle"><?= $reservation['reservation_id'] ?></td>
+                                <td class="align-middle"><?= htmlspecialchars($reservation['full_name']) ?></td>
+                                <td class="align-middle"><?= htmlspecialchars($reservation['title']) ?></td>
+                                <td class="align-middle"><?= htmlspecialchars((new DateTime($reservation['reservation_date']))->format('d/m/Y')) ?></td>
+                                <td class="align-middle"><?= htmlspecialchars((new DateTime($reservation['expiry_date']))->format('d/m/Y')) ?></td>
+                                <td class="align-middle">
+                                <?php 
+                                    $statusLabels = [
+                                        'pending' => 'Đang xử lý',
+                                        'confirmed' => 'Đã xác nhận',
+                                        'fulfilled' => 'Hoàn thành',
+                                        'expired' => 'Hết hạn',
+                                        'cancelled' => 'Bị hủy',
+                                    ];
+                                    echo htmlspecialchars($statusLabels[$reservation['status']] ?? 'Không xác định');
+                                    ?>
+                                </td>
                                 <td class="text-center align-middle">
                                     <div class="d-flex justify-content-center">
-                                        <a href="index.php?model=author&action=edit&id=<?= $author['author_id'] ?>" class="btn btn-sm btn-outline-primary me-3" title="Chỉnh sửa">
+                                        <a href="index.php?model=reservation&action=edit&id=<?= $reservation['reservation_id'] ?>" class="btn btn-sm btn-outline-primary me-3" title="Chỉnh sửa">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="index.php?model=author&action=delete&id=<?= $author['author_id'] ?>" method="POST" class="d-inline" onsubmit="return confirmDelete();">
+                                        <form action="index.php?model=reservation&action=delete&id=<?= $reservation['reservation_id'] ?>" method="POST" class="d-inline" onsubmit="return confirmDelete();">
                                             <button type="submit" class="btn btn-sm btn-outline-danger mx-2" title="Xóa">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
@@ -89,19 +106,17 @@
     </div>
 </div>
 
-
-<script>    
-    $(document).ready(function() {
-        var table = $('#dataTable').DataTable({
+<script>
+$(document).ready(function() {
+    var table = $('#dataTable').DataTable({
         dom: 'rtp',
         language: {
             processing: "Đang xử lý...",
-            search:'<i class="fas fa-search"></i>',
+            search: '<i class="fas fa-search"></i>',
             lengthMenu: "Hiển thị _MENU_ dòng",
             info: "Đang hiển thị _START_ đến _END_ của _TOTAL_ bản ghi",
             infoEmpty: "Không có dữ liệu",
             infoFiltered: "(Được lọc từ _MAX_ bản ghi)",
-            infoPostFix: "",
             loadingRecords: "Đang tải...",
             zeroRecords: "Không tìm thấy bản ghi nào",
             emptyTable: "Không có dữ liệu trong bảng",
@@ -110,18 +125,10 @@
                 previous: "Trước",
                 next: "Tiếp",
                 last: "Cuối"
-            },
-            aria: {
-                sortAscending: ": Sắp xếp tăng dần",
-                sortDescending: ": Sắp xếp giảm dần"
             }
         },
         columnDefs: [
-            {
-                targets: -1, 
-                orderable: false, 
-                searchable: false 
-            }
+            { targets: -1, orderable: false, searchable: false }
         ]
     });
 
@@ -130,9 +137,9 @@
             return;
         }
         
-        var authorId = $(this).find('td:first').text().trim();
+        var reservationId = $(this).find('td:first').text().trim();
         
-        window.location.href = 'index.php?model=author&action=edit&id=' + authorId;
+        window.location.href = 'index.php?model=reservation&action=edit&id=' + reservationId;
     });
 
     $('#searchInput').on('keyup', function() {
@@ -141,6 +148,6 @@
 });
 
 function confirmDelete() {
-    return confirm('Bạn có chắc muốn xóa người dùng này?');
+    return confirm('Bạn có chắc muốn xóa đặt chỗ này?');
 }
 </script>
