@@ -32,10 +32,10 @@ class Setup {
 
 try {
     $setup = new Setup();
-    $schemaFile = 'D:\XAMPP\htdocs\LibraryManagementSystem\database\migrations\schema.sql';
-    $dataFile = 'D:\XAMPP\htdocs\LibraryManagementSystem\database\seeders\data.sql';
-    $updateFile = 'D:\XAMPP\htdocs\LibraryManagementSystem\database\migrations\update.sql';
-    
+    $schemaFile = 'D:\xampp\htdocs\LibraryManagementSystem\database\migrations\schema.sql';
+    $dataFile = 'D:\xampp\htdocs\LibraryManagementSystem\database\seeders\data.sql';
+    $updateFile = 'D:\xampp\htdocs\LibraryManagementSystem\database\migrations\update.sql';
+
     // $setup->runSQLFromFile($schemaFile);
     // $setup->runSQLFromFile($dataFile);
     $setup->runSQLFromFile($updateFile);

@@ -41,5 +41,8 @@ class Controller {
     public function register_success(){
         
     }
+    public function update_status($status, $returnDate = null){
+        
+    }
 }
 ?>
