@@ -22,21 +22,6 @@ class Book_Category extends Model
         return $stmt->execute();
     }
 
-    public function updateBookCategory($bookId, $categoryId) {
-        // Xóa tất cả các danh mục hiện tại trước khi thêm mới
-        $sqlDelete = "DELETE FROM book_category WHERE book_id = :book_id";
-        $stmtDelete = $this->conn->prepare($sqlDelete);
-        $stmtDelete->bindParam(':book_id', $bookId, PDO::PARAM_INT);
-        $stmtDelete->execute();
-    
-        // Thêm mới danh mục
-        $sqlInsert = "INSERT INTO book_category (book_id, category_id) VALUES (:book_id, :category_id)";
-        $stmtInsert = $this->conn->prepare($sqlInsert);
-        $stmtInsert->bindParam(':book_id', $bookId, PDO::PARAM_INT);
-        $stmtInsert->bindParam(':category_id', $categoryId, PDO::PARAM_INT);
-        return $stmtInsert->execute();
-    }
-
     public function read() {
         $query = "SELECT * FROM {$this->table_name}";
         $stmt = $this->conn->prepare($query);

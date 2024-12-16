@@ -210,25 +210,26 @@ class Book extends Model
         }
     }
 
-    function getCurrentQuantity($id) {
-        // Truy vấn số lượng sách có sẵn từ bảng
-        $sql = "SELECT available_quantity FROM book WHERE book_id = ?";
-        // Thực hiện truy vấn...
-        return $result['available_quantity'];
-    }
-    
-    // Lấy số lượng sách đang được mượn
-    function getBorrowedQuantity($id) {
-        // Truy vấn số lượng sách đang được mượn từ bảng mượn sách
-        $sql = "SELECT COUNT(*) as borrowed_quantity FROM loan WHERE book_id = ? ";
-        // Thực hiện truy vấn...
-        return $result['borrowed_quantity'];
-    }
-    
-    // Cập nhật số lượng sách có sẵn
-    function updateAvailableQuantity($id, $updated_quantity) {
-        $sql = "UPDATE book SET available_quantity = ? WHERE book_id = ?";
-        // Thực hiện truy vấn cập nhật...
-        return $result;
+    public function getUnassessedBooks() {
+        $query = "
+            SELECT 
+                b.book_id, 
+                b.title AS book_title
+            FROM 
+                loan l
+            INNER JOIN 
+                book b ON l.book_id = b.book_id
+            LEFT JOIN 
+                book_condition bc ON l.loan_id = bc.loan_id
+            WHERE 
+                bc.loan_id IS NULL
+            AND 
+                l.status = 'returned'
+            GROUP BY 
+                b.book_id, b.title
+        ";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

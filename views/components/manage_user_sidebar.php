@@ -30,8 +30,12 @@
         <i class="fa-solid fa-user-group"style="color: #423b8e; font-size: 1.1rem; margin-right: 0.75rem;"></i>
         <span style="color: #423b8e; font-size: 0.9rem;">Quản lý NXB</span>
     </a>
-    <a class="nav-link" href="route.php?model=book&action=index" >
+   <a class="nav-link" href="route.php?model=book&action=index" >
         <i class="fa-solid fa-user-group"style="color: #423b8e; font-size: 1.1rem; margin-right: 0.75rem;"></i>
         <span style="color: #423b8e; font-size: 0.9rem;">Quản lý sách</span>
+    </a> 
+    <a class="nav-link" href="route.php?model=book_condition&action=index" >
+        <i class="fa-solid fa-user-group"style="color: #423b8e; font-size: 1.1rem; margin-right: 0.75rem;"></i>
+        <span style="color: #423b8e; font-size: 0.9rem;">Quản lý phiểu kiểm tra sách</span>
     </a>
 </li>
